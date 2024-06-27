@@ -37,7 +37,7 @@ public class moveBobber : MonoBehaviour
             bobTrans = GetComponent<Transform>();
             bobPosition = bobTrans.position;
             endPosition = reticle.transform.position;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+           rb.constraints = RigidbodyConstraints.FreezeAll;
 
 
 
@@ -53,7 +53,8 @@ public class moveBobber : MonoBehaviour
             {
                 isMove = false;
                 bobLanded = true;
-              //  Debug.Log("Rauru");
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+                //  Debug.Log("Rauru");
                 current = 0;
             }
         }
@@ -73,7 +74,7 @@ public class moveBobber : MonoBehaviour
 
 
             // Move back to player
-            transform.position = new Vector3(player.transform.position.x + 2f, player.transform.position.y + 2f, player.transform.position.z);
+            transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 1f, player.transform.position.z);
 
 
 

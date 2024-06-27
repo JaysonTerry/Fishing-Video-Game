@@ -11,9 +11,14 @@ public class playerHealth : MonoBehaviour
     public bool heldDownZ;
     public bool tookDamage;
 
+    private void Awake()
+    {
+        moveScript = gameObject.GetComponent<playerMovement>();
+    }
     private void Start()
     {
         health = 5;
+        
     }
 
     private void OnTriggerEnter(Collider col)
@@ -35,15 +40,18 @@ public class playerHealth : MonoBehaviour
    
     void Update()
     {
-        if (!moveScript.enabled)
+        if (moveScript != null)
         {
-            cooldown = cooldown + Time.deltaTime;
-        }
-        if (!moveScript.enabled && cooldown > 0.8f)
-        {
-            moveScript.enabled = true;
-            cooldown = 0;
-            tookDamage = false;
+            if (!moveScript.enabled)
+            {
+                cooldown = cooldown + Time.deltaTime;
+            }
+            if (!moveScript.enabled && cooldown > 0.8f)
+            {
+                moveScript.enabled = true;
+                cooldown = 0;
+                tookDamage = false;
+            }
         }
     }
 
@@ -53,6 +61,8 @@ public class playerHealth : MonoBehaviour
         tookDamage = true;
         if (health < 1)
         {
+            gameObject.transform.position = new Vector3(0, 3, 0);
+            moveScript.Return2Normal();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             health = 5;
         }

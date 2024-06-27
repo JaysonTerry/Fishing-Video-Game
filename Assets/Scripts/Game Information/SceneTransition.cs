@@ -17,7 +17,7 @@ public class SceneTransition : MonoBehaviour
     public  int nextRoomRow;
     public string nextRoomName;
     public Image roomIcon;
-    public StateController stateController;
+    public GameStateController stateController;
     public PlayerPlacer playerPlacer;
     public string nextSpawnDirection;
     [SerializeField] GameObject canvas;
@@ -26,10 +26,16 @@ public class SceneTransition : MonoBehaviour
     public void Start()
     {
         canvas = GameObject.Find("Canvas 1");
-        stateController = canvas.GetComponent<StateController>();
+        stateController = canvas.GetComponent<GameStateController>();
         roomDisplay = canvas.GetComponent<RoomDisplay>();
+        roomsInfo = canvas.GetComponent<RoomsInfo>();
         playerPlacer = gameObject.GetComponent<PlayerPlacer>();
         
+    }
+
+    private void OnDestroy()
+    {
+        stateController.OnLoadingZone -= Set_Next_Room;
     }
 
 
@@ -37,13 +43,14 @@ public class SceneTransition : MonoBehaviour
 
     private void Set_Next_Room(object sender, EventArgs e)
     {
-        GameObject canvas = GameObject.Find("Canvas 1");
-        Room newRoom = canvas.AddComponent<Room>();
-        newRoom.Init(nextRoomCol, nextRoomRow, nextRoomName, true, roomIcon);
-        Debug.Log(newRoom.roomName);
-        roomsInfo.AddRoom(newRoom);
-        roomDisplay.Update_Map(nextRoomCol, nextRoomRow);
+        bool roomAdded  = AddNewRoom(nextRoomCol, nextRoomRow, nextRoomName, roomIcon, roomsInfo); //add new room to a list 
+        if (roomAdded)
+        {
+            roomDisplay.Update_Map(nextRoomCol, nextRoomRow, nextRoomName);
+        }
         playerPlacer.enterPos = playerPlacer.SetEnterPositon(nextSpawnDirection);
+        GameObject player = GameObject.FindWithTag("Player");
+        playerPlacer.PlacePlayer(player);
     }
 
         public void OnTriggerEnter(Collider other)
@@ -58,7 +65,37 @@ public class SceneTransition : MonoBehaviour
             //sceneInfo.tracking.playerInRoom = false;
             transitioned = true;
             SceneManager.LoadScene(sceneToLoad);
+
+
+
         }
     }
-   
+
+    public bool AddNewRoom(int nextRoomCol, int nextRoomRow, string nextRoomName, Image roomIcon, RoomsInfo roomsInfo)
+    {
+        //adds a room and displays it on the map
+       
+
+        Room roomToAdd = (Room)ScriptableObject.CreateInstance("Room");
+        roomToAdd.Init(nextRoomCol, nextRoomRow, nextRoomName, true, roomIcon);
+        for (int i = 0; i < roomsInfo.Rooms.Count; i++)
+        {
+            //check if room to be added already exists
+            if (roomsInfo.Rooms[i].roomName == roomToAdd.roomName)
+            {
+                Debug.Log("A room of that name already exists!");
+                return false;
+            }
+
+        }
+        
+     roomsInfo.Rooms.Add(roomToAdd);
+        return true;
+
+    }
+
+  
+        
+        
+
 }

@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu]
-public class RoomsInfo : ScriptableObject
+
+
+public class RoomsInfo : MonoBehaviour
 {
 
 
-    [Header("Information")]
     public string roomName;
     public string shortDescription;
     public int roomCol;
@@ -25,25 +25,4 @@ public class RoomsInfo : ScriptableObject
         // tracking = GameObject.Find("Player Dot").GetComponent<TrackRoom>();
     }
 
-   
-
-
-
-    public void AddRoom(Room roomToAdd)
-    {
-        //adds a room and displays it on the map
-        /* for (int i = 0; i < Rooms.Count; i++)
-         {
-             //check if room to be added already exists
-             if (Rooms[i].roomRow == roomToAdd.roomRow && Rooms[i].roomCol == roomToAdd.roomCol)
-             {
-                 return;
-             }
-
-         } */
-
-
-        Rooms.Add(roomToAdd);
-        
-    }
 }

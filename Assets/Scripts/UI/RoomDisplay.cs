@@ -9,6 +9,8 @@ public class RoomDisplay : MonoBehaviour
     public Sprite roomSprite;
     public Vector2 spawnOffset;
     static private RoomDisplay instance = null;
+    public RoomsInfo roomsInfo;
+    public Image roomIcon;
 
 
 
@@ -26,34 +28,24 @@ public class RoomDisplay : MonoBehaviour
    private void Start()
     {
         DontDestroyOnLoad(canvas);
-       
 
 
-        GameObject imgObject = new GameObject("New Room");
         float h = canvas.GetComponent<RectTransform>().rect.height;
         float w = canvas.GetComponent<RectTransform>().rect.width;
 
         spawnOffset = new Vector2(-0.40f * w, 0.38f * h); // offset from the top left corner
 
-        RectTransform trans = imgObject.AddComponent<RectTransform>();
-        trans.transform.SetParent(canvas.transform); // setting parent
-        trans.localScale = Vector3.one;
-        trans.anchorMin = new Vector2(0, 1);
-        trans.anchorMax = new Vector2(0, 1);
-        trans.localPosition = spawnOffset; // Use anchoredPosition to position the RectTransform
-
-
-        trans.sizeDelta = new Vector2(10, 10); // custom size
-        imgObject.AddComponent<Image>();
-        Image image = imgObject.GetComponent<Image>();
-        image.sprite = roomSprite;
-        imgObject.transform.SetParent(canvas.transform);
+        //set up the starting room
+        Update_Map(2, 2, "Room B2");
+        Room roomToAdd = (Room)ScriptableObject.CreateInstance("Room");
+        roomToAdd.Init(2, 2, "Room B2", true, roomIcon);
+        roomsInfo.Rooms.Add(roomToAdd);
     }
 
-    public void Update_Map(int roomCol, int roomRow)
+    public void Update_Map(int roomCol, int roomRow, string roomName)
     {
         
-        GameObject imgObject = new GameObject("New Room");
+        GameObject imgObject = new GameObject(roomName);
         RectTransform trans = imgObject.AddComponent<RectTransform>();
         trans.transform.SetParent(canvas.transform); // setting parent
         trans.localScale = Vector3.one;
@@ -67,7 +59,7 @@ public class RoomDisplay : MonoBehaviour
         Image image = imgObject.GetComponent<Image>();
         image.sprite = roomSprite;
         imgObject.transform.SetParent(canvas.transform);
-        imgObject.transform.position += new Vector3(60 * (roomCol - 2), 100 * (roomRow - 2), 0); //setting new room icon position
+        imgObject.transform.position += new Vector3(60 * (roomCol - 2), -40 * (roomRow - 2), 0); //setting new room icon position
 
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Room : MonoBehaviour
+public class Room : ScriptableObject
 {
     public int roomCol;
     public int roomRow;

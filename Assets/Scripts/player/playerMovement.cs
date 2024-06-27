@@ -48,18 +48,19 @@ public class playerMovement : MonoBehaviour
     private float timer;
     public bool CastCheck = true;
     private float speedDif = 0f;
+    public static GameObject instance;
 
     
     
 
     public Transform groundCheck;
     public LayerMask ground;
+   
 
 
 
-  
-       
-    
+
+
     public void StartDigging()
     {
         if (isDigging)
@@ -81,13 +82,28 @@ public class playerMovement : MonoBehaviour
         riseUp = false;
         CastCheck = false;
     }
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        instance = gameObject;
+    }
+
+
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
         rb = GetComponent<Rigidbody>();
         playerTransform = GetComponent<Transform>();
         CastCheck = true;
         playerReticle = new Reticle(this.gameObject, aimScript);
         arrowClone = this.gameObject;
+
+
     }
 
 
