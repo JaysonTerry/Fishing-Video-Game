@@ -27,10 +27,7 @@ public class playerTraveling : MonoBehaviour
             //Digging: check if fully underground
             if (moveScript.isDigging && Mathf.Abs(moveScript.topHeight - Mathf.Abs(moveScript.playerTransform.position.y)) > 5f)
             {
-                if (!Input.GetKey(KeyCode.C))
-                {
-                    moveScript.riseUp = true;
-                }
+                Debug.Log("gamers");
                 if (moveScript.riseUp)
                 {
                     moveScript.rb.velocity = new Vector3(moveScript.rb.velocity.x, moveScript.digHop, moveScript.rb.velocity.z);

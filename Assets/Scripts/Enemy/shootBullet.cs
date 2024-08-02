@@ -7,7 +7,7 @@ public class shootBullet : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] EnemyNotice noticeScript;
     [SerializeField] playerHealth healthScript;
-    public float cooldown = 0f;
+    [SerializeField] float cooldown = 0f;
    
    
 

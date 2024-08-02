@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class playerHealth : MonoBehaviour
 {
@@ -10,10 +11,12 @@ public class playerHealth : MonoBehaviour
     public float cooldown = 0f;
     public bool heldDownZ;
     public bool tookDamage;
+    public bool isInvincible;
 
     private void Awake()
     {
         moveScript = gameObject.GetComponent<playerMovement>();
+        OnDamageTaken += I_Frames;
     }
     private void Start()
     {
@@ -21,9 +24,10 @@ public class playerHealth : MonoBehaviour
         
     }
 
+    public event EventHandler OnDamageTaken;
     private void OnTriggerEnter(Collider col)
     {
-         if(col.gameObject.tag == "Projectile")
+         if(col.gameObject.tag == "Projectile" && !isInvincible)
          {
         takeDamage();
             moveScript.Return2Normal();
@@ -35,7 +39,19 @@ public class playerHealth : MonoBehaviour
                 heldDownZ = true;
             }
             Destroy(col.gameObject);
-         }   
+         }
+
+        else if (col.gameObject.tag == "Enemy" && !isInvincible)
+        {
+            takeDamage();
+            moveScript.Return2Normal();
+            moveScript.enabled = false;
+            Quaternion rotation = gameObject.transform.rotation;
+            Vector3 moveDir = rotation * Vector3.forward;
+            
+            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(-moveDir.x * 2, 2, -moveDir.z * 2);
+            cooldown = 0.4f;
+        }
     }
    
     void Update()
@@ -57,6 +73,7 @@ public class playerHealth : MonoBehaviour
 
         void takeDamage()
     {
+        OnDamageTaken?.Invoke(this, EventArgs.Empty);
         health = health - 1;
         tookDamage = true;
         if (health < 1)
@@ -67,5 +84,28 @@ public class playerHealth : MonoBehaviour
             health = 5;
         }
         return;
+    }
+
+
+    private void I_Frames(object sender, EventArgs e)
+    {
+        isInvincible = true;
+        StartCoroutine("I_Frame_Flicker");
+    }
+    IEnumerator I_Frame_Flicker()
+    {
+        SkinnedMeshRenderer meshRenderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+        int flickersLeft = 120; //sets how many flickers before becoming vulrable again
+
+        while (isInvincible == true && flickersLeft > 0)
+        {
+            meshRenderer.enabled = false;
+            yield return null;
+            meshRenderer.enabled = true;
+            yield return null;
+            flickersLeft = flickersLeft - 1; //counts down each flicker
+        }
+        isInvincible = false;
+
     }
 }

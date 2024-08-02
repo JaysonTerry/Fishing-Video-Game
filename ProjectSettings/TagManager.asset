@@ -10,6 +10,7 @@ TagManager:
   - Projectile
   - Loading Zone
   - Room Canvas
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - GroundPass
   - Boundary
   - Ground
-  - 
+  - Enemy
   - 
   - 
   - 

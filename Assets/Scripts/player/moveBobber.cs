@@ -49,7 +49,7 @@ public class moveBobber : MonoBehaviour
             transform.position = Vector3.Slerp(bobPosition, endPosition, current);
 
 
-            if (current >= 0.60f)
+            if (Mathf.Abs((bobPosition - endPosition).magnitude) <= 0.05f)
             {
                 isMove = false;
                 bobLanded = true;
