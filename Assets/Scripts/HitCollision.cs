@@ -9,10 +9,11 @@ public class HitCollision : MonoBehaviour
     private void OnTriggerEnter(Collider col)
     {
         playerHealth healthScript = gameObject.GetComponentInParent<playerHealth>();
-        //Debug.Log(col.gameObject.name);
+        Debug.Log(col.gameObject.name);
         if (col.gameObject.tag == "Enemy")
         {
-            Destroy(col.gameObject);
+            Destroy(col.transform.parent.gameObject);
+
         }
     }
 }

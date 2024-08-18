@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8427912024800635368}
   - component: {fileID: 5802628178205691227}
   - component: {fileID: 3710230082584392430}
-  m_Layer: 9
+  m_Layer: 3
   m_Name: Rising Hitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

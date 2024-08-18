@@ -27,21 +27,21 @@ public class playerHealth : MonoBehaviour
     public event EventHandler OnDamageTaken;
     private void OnTriggerEnter(Collider col)
     {
-         if(col.gameObject.tag == "Projectile" && !isInvincible)
-         {
-        takeDamage();
+        if (col.gameObject.tag == "Projectile" && !isInvincible)
+        {
+            takeDamage();
             moveScript.Return2Normal();
             moveScript.enabled = false;
             Vector3 projVelocity = col.gameObject.GetComponent<Rigidbody>().velocity;
-            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(projVelocity.x/2, 5, projVelocity.z/2);
+            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(projVelocity.x / 2, 5, projVelocity.z / 2);
             if (Input.GetKey(KeyCode.Z))
             {
                 heldDownZ = true;
             }
             Destroy(col.gameObject);
-         }
+        }
 
-        else if (col.gameObject.tag == "Enemy" && !isInvincible)
+        else if (col.gameObject.tag == "Enemy" && !isInvincible && col.gameObject.layer != 3)
         {
             takeDamage();
             moveScript.Return2Normal();
