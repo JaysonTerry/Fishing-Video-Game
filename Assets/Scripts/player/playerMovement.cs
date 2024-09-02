@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-//2 scripts: Casting, Traveling
-
+//August 2nd
 public class Reticle
 {
     public GameObject retObj;
