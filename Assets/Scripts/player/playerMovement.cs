@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-//August 2nd
+
 public class Reticle
 {
     public GameObject retObj;
@@ -44,7 +44,7 @@ public class playerMovement : MonoBehaviour
     public bool isTraveling = false;
     public bool riseUp = false;
     public bool risingFromDig = false;
-    private float accleration = 20;
+    private float acceleration = 0;
     private float timer;
     public bool CastCheck = true;
     private float speedDif = 0f;
@@ -56,6 +56,17 @@ public class playerMovement : MonoBehaviour
 
     public Transform groundCheck;
     public LayerMask ground;
+
+     float secondsToChangeDir = 2f;
+     float secondsSoFar = 0.0f;
+      bool slipping = false;
+       bool frameSwitch = false;
+      Vector3 lastMoveVector = Vector3.zero;
+       Vector3 moveVector = Vector3.zero;
+       float startTime;
+       bool movingFwd = false;
+       KeyCode pressedKey = KeyCode.None;
+
 
 
 
@@ -109,12 +120,12 @@ public class playerMovement : MonoBehaviour
 
     void Update()
     {
-        Debug.Log(CastCheck);
+        //Debug.Log(CastCheck);
         //Movement: left/right input
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-
-
+        
+        
 
 
         Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
@@ -147,7 +158,7 @@ public class playerMovement : MonoBehaviour
         if (castScript.isCasting == false)
         {
             rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
-            rb.constraints = RigidbodyConstraints.None;
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
         //DIGGING
@@ -193,23 +204,102 @@ public class playerMovement : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space))
             {
-                speedDif = 10f - rb.velocity.magnitude;
-                movementSpeed = speedDif * accleration;
+            
+              
+                if (!slipping && movementDirection != Vector3.zero) {
+                moveVector = movementDirection;
 
-                Vector3 moveDirection = new Vector3(horizontalInput, 0, verticalInput);
+                if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
+                
+                 if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+                      pressedKey = KeyCode.LeftArrow;
+                 }
+                  else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+                      pressedKey = KeyCode.RightArrow;
+                 }
+                 else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+                      pressedKey = KeyCode.UpArrow;
+                 }
+                 else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+                      pressedKey = KeyCode.DownArrow;
+                 }
 
-                rb.AddForce(movementSpeed * moveDirection);
+                    startTime = Time.time;
+                    }
+                    // Debug.Log(Time.time - startTime);
+                    if(Input.GetKeyUp(pressedKey) && (Time.time - startTime) > 1.5f) {
+                    movingFwd = true;
+                    startTime = Time.time;
+                    }
+                
+              
+                }
+
+             /*
+               if (lastMoveVector != Vector3.zero) {
+
+                Debug.Log("Last" + lastMoveVector);
+                }
+                if (moveVector != Vector3.zero) {
+                Debug.Log(" This" + moveVector);
+                } 
+                */
+
+                float t = secondsSoFar / secondsToChangeDir;
+          
+                if (lastMoveVector == -moveVector && moveVector != Vector3.zero && lastMoveVector != Vector3.zero && movingFwd) {
+                secondsSoFar += Time.deltaTime;
+                slipping = true;
+
+                 rb.velocity = lastMoveVector * movementSpeed;
+                 movementSpeed = Mathf.Lerp(movementSpeed, 0.75f, t);
+                //Debug.Log("Portion lerped: " + t);
+                }
+                else {
+                    secondsSoFar = 0;
+                }
+               
+                 
+                 if(t > 0.4f) {
+                 secondsSoFar = 0;
+                slipping = false;
+                lastMoveVector = Vector3.zero;
+                moveVector = Vector3.zero;
+                movementSpeed = 6f;
+                startTime = Time.time;
+                 if (Input.GetKey(KeyCode.LeftArrow)) {
+                      pressedKey = KeyCode.LeftArrow;
+                 }
+                 else if (Input.GetKey(KeyCode.RightArrow)) {
+                      pressedKey = KeyCode.RightArrow;
+                 }
+                 else if (Input.GetKey(KeyCode.UpArrow)) {
+                      pressedKey = KeyCode.UpArrow;
+                 }
+                 else if (Input.GetKey(KeyCode.DownArrow)) {
+                      pressedKey = KeyCode.DownArrow;
+                 }
+               }
+                 if(!slipping)  {
+                 
+                  rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
+                 
+                lastMoveVector = moveVector;
+                }
+                
+
 
             }
 
-
-
+           
 
 
             else if (playerTransform.position.y < topHeight)
             {
                 rb.velocity = new Vector3(horizontalInput * 2f, 5 + (0.02f * movementSpeed), verticalInput * 2f);
                 risingFromDig = true;
+             lastMoveVector = Vector3.zero;
+             moveVector = Vector3.zero;
             }
             else
             {
@@ -220,6 +310,8 @@ public class playerMovement : MonoBehaviour
                 risingFromDig = false;
                 Destroy(arrowClone);
                 movementSpeed = 6;
+                secondsSoFar = 0f;
+                slipping = false;
             }
         }
 
