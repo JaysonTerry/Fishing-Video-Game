@@ -12,11 +12,6 @@ public class EnemyNotice : MonoBehaviour
         sightRadius = 10f;
     }
 
-    public class Enemy
-    {
-        public GameObject enemy;
-        public int health;
-    }
 
     void OnSightingPlayer()
     {

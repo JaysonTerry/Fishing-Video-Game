@@ -5,18 +5,21 @@ using UnityEngine;
 public class moveBobber : MonoBehaviour
 {
     
-    float speed = 0.5f; // Movement speed
-    GameObject reticle;
+    private float speed = 10f; // Movement speed
+   public GameObject reticle;
     [SerializeField] playerCasting castScript;
     [SerializeField] playerMovement moveScript;
     Vector3 bobPosition;
     Vector3 endPosition;
     Transform bobTrans;
-    float current = 0;
+    private float current = 0;
+    private float current2 = 0;
    public bool isMove = false;
    public bool bobLanded = false;
     GameObject player;
     Rigidbody rb;
+    Vector3 midPoint;
+   bool midReached = false;
     void Start()
     {
         player = GameObject.Find("Player");
@@ -28,7 +31,7 @@ public class moveBobber : MonoBehaviour
     void Update()
     {
        
-        if (castScript.isCasting && Input.GetKeyDown(KeyCode.Space) && !bobLanded || isMove)
+        if (castScript.isCasting && Input.GetKeyDown(KeyCode.Space) && !bobLanded)
         {
         
             isMove = true;
@@ -37,18 +40,34 @@ public class moveBobber : MonoBehaviour
             bobTrans = GetComponent<Transform>();
             bobPosition = bobTrans.position;
             endPosition = reticle.transform.position;
+            midPoint = (bobPosition + endPosition)/2;
+            midPoint = new Vector3(midPoint.x, midPoint.y + 5f, midPoint.z);
            rb.constraints = RigidbodyConstraints.FreezeAll;
+           }
 
 
 
-
+           if(isMove){
 
             // Move to reticle
-            current = Mathf.MoveTowards(current, 1f, speed * Time.deltaTime);
+           Vector3 bobPos = bobTrans.position;
+          
+
+            if (Mathf.Abs((bobPos - midPoint).magnitude) >= 0.05f)
+            {
+             current = Mathf.MoveTowards(current, 1f, speed * Time.deltaTime);
             transform.Translate(transform.forward * speed);
-            transform.position = Vector3.Slerp(bobPosition, endPosition, current);
-
-
+            transform.position = Vector3.Lerp(bobPosition, midPoint, current);
+            }
+            else if(!midReached){
+            midReached = true;
+            bobPosition = bobTrans.position;
+            }
+            if (midReached) {
+                 current2 = Mathf.MoveTowards(current2, 1f, speed * Time.deltaTime);
+            transform.Translate(transform.forward * speed);
+            transform.position = Vector3.Lerp(bobPosition, endPosition, current2);
+            }
             if (Mathf.Abs((bobPosition - endPosition).magnitude) <= 0.05f)
             {
                 isMove = false;
@@ -56,6 +75,8 @@ public class moveBobber : MonoBehaviour
                 rb.constraints = RigidbodyConstraints.FreezeAll;
                 //  Debug.Log("Rauru");
                 current = 0;
+                current2 = 0;
+                midReached = false;
             }
         }
 

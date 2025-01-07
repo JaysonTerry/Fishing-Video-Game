@@ -11,7 +11,7 @@ public class RoomsInfo : MonoBehaviour
     public string shortDescription;
     public int roomCol;
     public int roomRow = 2;
-    public List<Room> Rooms = new List<Room>();
+    public List<RoomData> Rooms = new List<RoomData>();
     public int[] roomCords;
     public TrackRoom tracking;
     public GameObject sceneManager;

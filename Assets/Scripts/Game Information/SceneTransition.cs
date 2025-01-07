@@ -76,7 +76,7 @@ public class SceneTransition : MonoBehaviour
         //adds a room and displays it on the map
        
 
-        Room roomToAdd = (Room)ScriptableObject.CreateInstance("Room");
+        RoomData roomToAdd = (RoomData)ScriptableObject.CreateInstance("RoomData");
         roomToAdd.Init(nextRoomCol, nextRoomRow, nextRoomName, true, roomIcon);
         for (int i = 0; i < roomsInfo.Rooms.Count; i++)
         {

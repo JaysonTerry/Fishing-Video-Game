@@ -33,11 +33,11 @@ public class RoomDisplay : MonoBehaviour
         float h = canvas.GetComponent<RectTransform>().rect.height;
         float w = canvas.GetComponent<RectTransform>().rect.width;
 
-        spawnOffset = new Vector2(-0.40f * w, 0.38f * h); // offset from the top left corner
+        spawnOffset = new Vector2(-0.375f * w, 0.38f * h); // offset from the top left corner
 
         //set up the starting room
         Update_Map(2, 2, "Room B2");
-        Room roomToAdd = (Room)ScriptableObject.CreateInstance("Room");
+        RoomData roomToAdd = (RoomData)ScriptableObject.CreateInstance("RoomData");
         roomToAdd.Init(2, 2, "Room B2", true, roomIcon);
         roomsInfo.Rooms.Add(roomToAdd);
     }
@@ -51,10 +51,12 @@ public class RoomDisplay : MonoBehaviour
         trans.localScale = Vector3.one;
         trans.anchorMin = new Vector2(0, 1);
         trans.anchorMax = new Vector2(0, 1);
+        trans.pivot = new Vector2(0, 1); // Set the pivot to the top-left corner
+
         trans.localPosition = spawnOffset; // Use anchoredPosition to position the RectTransform
 
 
-        trans.sizeDelta = new Vector2(10, 10); // custom size
+        trans.sizeDelta = new Vector2(10, 10); // setting size
         imgObject.AddComponent<Image>();
         Image image = imgObject.GetComponent<Image>();
         image.sprite = roomSprite;

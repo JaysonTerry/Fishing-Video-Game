@@ -44,10 +44,8 @@ public class playerMovement : MonoBehaviour
     public bool isTraveling = false;
     public bool riseUp = false;
     public bool risingFromDig = false;
-    private float acceleration = 0;
     private float timer;
     public bool CastCheck = true;
-    private float speedDif = 0f;
     public static GameObject instance;
     [SerializeField] Vector3 movementDirection;
 
@@ -121,6 +119,7 @@ public class playerMovement : MonoBehaviour
     void Update()
     {
         //Debug.Log(CastCheck);
+        Debug.Log(rotationSpeed);
         //Movement: left/right input
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
@@ -132,27 +131,37 @@ public class playerMovement : MonoBehaviour
         movementDirection.Normalize();
         if (movementDirection != Vector3.zero)
         {
+
             if (castScript.isCasting)
             {
+             GameObject reticle = GameObject.Find("Reticle(Clone)");
+            Vector3 direction = reticle.transform.position - transform.position;
+             Quaternion toRotation = Quaternion.LookRotation(direction);
+              direction = reticle.transform.rotation * direction;
+                direction.y = 0;
+
+             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+
+
                 if (bobScript.bobLanded)
                 {
                     rotationSpeed = 0f;
                 }
                 else
                 {
-                    rotationSpeed = 90f;
+                    rotationSpeed = 720f;
                 }
             }
 
             else
             {
                 rotationSpeed = 720f;
-            }
-            if (bobScript.isMove == false)
-            {
-                Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
+                 Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
             }
+
+       
+           
         }
         //MOVEMENT
         if (castScript.isCasting == false)
@@ -282,7 +291,7 @@ public class playerMovement : MonoBehaviour
                }
                  if(!slipping)  {
                  
-                  rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
+                   rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
                  
                 lastMoveVector = moveVector;
                 }

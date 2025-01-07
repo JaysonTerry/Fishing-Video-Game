@@ -5,7 +5,7 @@ using UnityEngine;
 public class TrackRoom : MonoBehaviour
 {
     public RoomsInfo roomsInfo;
-    public Room[] Rooms;
+    public RoomData[] Rooms;
     [SerializeField] public bool playerInRoom;
 
     void Start()

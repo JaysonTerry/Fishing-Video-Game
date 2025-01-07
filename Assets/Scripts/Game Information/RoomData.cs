@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Room : ScriptableObject
+[CreateAssetMenu]
+public class RoomData : ScriptableObject
 {
     public int roomCol;
     public int roomRow;
     public string roomName;
     public bool playerInRoom;
     public Image mapIcon;
+    float timer;
 
 
 
@@ -20,17 +22,13 @@ public class Room : ScriptableObject
     roomName = name;
     playerInRoom = inRoom;
     mapIcon = icon;
-        }
+    //DangerLvl = DgrLvl;
+   }
 
-
-
-
-   
-
+   void Update() {        
+ timer = timer + Time.deltaTime;
+ Debug.Log("TIMER: " + timer);
 }
 
-
-
-
-
+}
 
