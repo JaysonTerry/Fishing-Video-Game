@@ -17,6 +17,7 @@ public class reticleAiming : MonoBehaviour
     public bool activeRet = false;
     [SerializeField] bool isMovable = true;
     [SerializeField] bool bobLanded = false;
+    private float startingHeight;
 
    
     private void Start()
@@ -26,7 +27,8 @@ public class reticleAiming : MonoBehaviour
         Bobberscript = GameObject.Find("Bobber").GetComponent<moveBobber>();
         travelScript = GameObject.Find("Player").GetComponent<playerTraveling>();
         player = GameObject.Find("Player");
-        Instantiate(boundary, new Vector3(player.transform.position.x, player.transform.position.y + 4.5f, player.transform.position.z), Quaternion.identity);
+        startingHeight = gameObject.transform.position.y;
+        //Instantiate(boundary, new Vector3(player.transform.position.x, player.transform.position.y + 4.5f, player.transform.position.z), Quaternion.identity);
         transform.DetachChildren();
     }
 
@@ -46,11 +48,17 @@ void DestroyReticle()
         
         if (casting && isMovable && !bobLanded)
         {
+          if(Vector3.Distance(player.transform.position, reticle.transform.position) < 10f) {
                 float horizontalInput = Input.GetAxis("Horizontal");
                 float verticalInput = Input.GetAxis("Vertical");
 
                 rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
-            
+                }
+
+         else {
+            Vector3 dir =  Vector3.Normalize(player.transform.position - reticle.transform.position);
+            rb.AddForce(dir * 10f);
+         }
            
         }
         else
@@ -70,10 +78,12 @@ void DestroyReticle()
     
     void Update()
     {
+  
         casting = Castscript.isCasting;
        activeRet = Movescript.reticleActive;
         isMovable = !Bobberscript.isMove;
         bobLanded = Bobberscript.bobLanded;
+        transform.position = new Vector3(transform.position.x, startingHeight, transform.position.z);
         moveReticle(casting);
     }
         

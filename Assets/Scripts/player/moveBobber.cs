@@ -30,7 +30,7 @@ public class moveBobber : MonoBehaviour
 
     void Update()
     {
-       
+    
         if (castScript.isCasting && Input.GetKeyDown(KeyCode.Space) && !bobLanded)
         {
         
@@ -56,7 +56,6 @@ public class moveBobber : MonoBehaviour
             if (Mathf.Abs((bobPos - midPoint).magnitude) >= 0.05f)
             {
              current = Mathf.MoveTowards(current, 1f, speed * Time.deltaTime);
-            transform.Translate(transform.forward * speed);
             transform.position = Vector3.Lerp(bobPosition, midPoint, current);
             }
             else if(!midReached){
@@ -65,43 +64,35 @@ public class moveBobber : MonoBehaviour
             }
             if (midReached) {
                  current2 = Mathf.MoveTowards(current2, 1f, speed * Time.deltaTime);
-            transform.Translate(transform.forward * speed);
             transform.position = Vector3.Lerp(bobPosition, endPosition, current2);
+           
             }
-            if (Mathf.Abs((bobPosition - endPosition).magnitude) <= 0.05f)
+            if (Mathf.Abs((bobTrans.position - endPosition).magnitude) <= 0.05f)
             {
                 isMove = false;
                 bobLanded = true;
+                moveScript.reticleActive = false;
                 rb.constraints = RigidbodyConstraints.FreezeAll;
-                //  Debug.Log("Rauru");
+               //  Debug.Log("Rauru");
                 current = 0;
                 current2 = 0;
                 midReached = false;
+                 castScript.isCasting = false;
             }
         }
 
 
         else if (bobLanded && (Input.GetKeyDown(KeyCode.Space) || !Input.GetKey(KeyCode.Z)))
         {
+        
 
-
-
-
-            // Debug.Log("Mineru");
-
-           
-          
-
-
-
+            // Debug.Log("Mineru")
             // Move back to player
-            transform.position = new Vector3(player.transform.position.x + 1f, player.transform.position.y + 1f, player.transform.position.z);
-
-
-
+            Vector3 rightPosition = player.transform.position + player.transform.right;
+            rightPosition.y = rightPosition.y + 1f;
+           transform.position = rightPosition;
             isMove = false;
-                bobLanded = false;
-            castScript.isCasting = false;
+            bobLanded = false;
              moveScript.reticleActive = false;
             
 

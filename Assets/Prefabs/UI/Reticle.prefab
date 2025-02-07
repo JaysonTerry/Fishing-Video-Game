@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1229879341367558361}
   - component: {fileID: 7403149187296835241}
   - component: {fileID: -6930406711068825714}
-  m_Layer: 7
+  - component: {fileID: -3709862787704756079}
+  m_Layer: 3
   m_Name: Reticle
   m_TagString: Reticle
   m_Icon: {fileID: 0}
@@ -103,10 +104,16 @@ MonoBehaviour:
   rb: {fileID: 7403149187296835241}
   casting: 0
   Movescript: {fileID: 0}
+  Bobberscript: {fileID: 0}
+  Castscript: {fileID: 0}
+  travelScript: {fileID: 0}
   reticle: {fileID: 8371857246271360046}
   boundary: {fileID: 3123952464737268335, guid: 3ad63ae9f9a11994891e0e8466f0a3cf,
     type: 3}
   player: {fileID: 0}
+  activeRet: 0
+  isMovable: 1
+  bobLanded: 0
 --- !u!54 &7403149187296835241
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -134,5 +141,20 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5.12, y: 5.12, z: 0.2}
+  m_Size: {x: 1, y: 1, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3709862787704756079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8371857246271360046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fb21a97bfa944e46a950ced39d3b88c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lockOnRadius: 2.5
+  enemys: []
+  moveToEnemy: 0

@@ -12,6 +12,7 @@ TagManager:
   - Room Canvas
   - Enemy
   - Hitbox
+  - Bobber
   layers:
   - Default
   - TransparentFX

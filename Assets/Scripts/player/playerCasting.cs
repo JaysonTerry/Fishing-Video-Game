@@ -11,14 +11,16 @@ public class playerCasting : MonoBehaviour
     public reticleAiming aimScript;
     public Reticle reticle;
     [SerializeField] playerMovement moveScript;
-
+    
+  private RaycastHit hit;
+  private float distance = 6f; 
   
 
-
+  
     public Reticle Casting()
     {
-        
-                bobMoving = bobScript.isMove;
+         Vector3 direction = transform.forward;  
+         bobMoving = bobScript.isMove;
 
                 //check if aiming
                 if (Input.GetKey(KeyCode.Z) && moveScript.isGrounded() && moveScript.CastCheck && moveScript.isDigging == false)
@@ -26,9 +28,16 @@ public class playerCasting : MonoBehaviour
            
                     isCasting = true;
 
-                    if (moveScript.reticleActive == false)
+                    if (moveScript.reticleActive == false && bobScript.bobLanded == false)
                     {
-                        Instantiate(reticleSpawn, new Vector3(transform.position.x + (6 * transform.forward.x), transform.position.y, transform.position.z + (6 * transform.forward.z)), Quaternion.Euler(90, 0, 0));
+                      if (Physics.Raycast(transform.position, direction, out hit, distance))
+                     {
+                     Debug.Log("Hit a wall!");
+                        Instantiate(reticleSpawn, hit.point, Quaternion.Euler(90, 0, 0));
+                        }
+                        else {
+                         Instantiate(reticleSpawn, new Vector3(transform.position.x + (6 * transform.forward.x), transform.position.y, transform.position.z + (6 * transform.forward.z)), Quaternion.Euler(90, 0, 0));
+                        }
                         reticle = new Reticle(reticleSpawn, aimScript);
                         moveScript.reticleActive = true;
                         moveScript.positionReticle = GameObject.Find("Reticle(Clone)");
@@ -39,11 +48,12 @@ public class playerCasting : MonoBehaviour
 
                 if (isCasting)
                 {
-
+             
                     if (moveScript.isTraveling == false)
                     {
                         moveScript.rb.velocity = new Vector3(0, 0, 0);
                     }
+                 /*
                    //start traveling by digging underground
                     if (bobScript.bobLanded == true && Input.GetKeyDown(KeyCode.C) && moveScript.isDigging == false)
                     {
@@ -54,7 +64,7 @@ public class playerCasting : MonoBehaviour
                         moveScript.rb.useGravity = false;
                         moveScript.rb.velocity = new Vector3(moveScript.rb.velocity.x, moveScript.digHop, moveScript.rb.velocity.z);
                         moveScript.Invoke("StartDigging", 0.5f);
-                    }
+                    } */
 
                 }
 
@@ -67,6 +77,7 @@ public class playerCasting : MonoBehaviour
 
                 if (Input.GetKeyUp(KeyCode.Z) && isCasting && !bobMoving)
                 {
+                Debug.Log("Flag!");
                     isCasting = false;
                     moveScript.reticleActive = false;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -55,15 +56,10 @@ public class playerMovement : MonoBehaviour
     public Transform groundCheck;
     public LayerMask ground;
 
-     float secondsToChangeDir = 2f;
-     float secondsSoFar = 0.0f;
-      bool slipping = false;
-       bool frameSwitch = false;
-      Vector3 lastMoveVector = Vector3.zero;
-       Vector3 moveVector = Vector3.zero;
-       float startTime;
-       bool movingFwd = false;
-       KeyCode pressedKey = KeyCode.None;
+      
+    bool accelTrigger = false;
+    float digAccel = 2200f;
+    float digDecel = 100f;
 
 
 
@@ -107,6 +103,8 @@ public class playerMovement : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
         rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX;
+         rb.constraints = RigidbodyConstraints.FreezeRotationZ;
         playerTransform = GetComponent<Transform>();
         CastCheck = true;
         playerReticle = new Reticle(this.gameObject, aimScript);
@@ -119,7 +117,6 @@ public class playerMovement : MonoBehaviour
     void Update()
     {
         //Debug.Log(CastCheck);
-        Debug.Log(rotationSpeed);
         //Movement: left/right input
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
@@ -203,100 +200,34 @@ public class playerMovement : MonoBehaviour
             if (!arrowActive)
             {
                 arrowClone = Instantiate(arrow, transform.position, transform.rotation);
-                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
+                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 5, transform.position.z);
                 arrowActive = true;
             }
             else
             {
-                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 10, transform.position.z);
+                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 5, transform.position.z);
             }
 
-            if (Input.GetKey(KeyCode.Space))
-            {
+            if (Input.GetKey(KeyCode.Space)){
+           
+            if(accelTrigger == false){
+             rb.velocity = new Vector3(horizontalInput * movementSpeed, 0f, verticalInput * movementSpeed);
+             accelTrigger = true;
+             }
             
-              
-                if (!slipping && movementDirection != Vector3.zero) {
-                moveVector = movementDirection;
+           
+             else {
 
-                if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)) {
-                
-                 if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-                      pressedKey = KeyCode.LeftArrow;
-                 }
-                  else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-                      pressedKey = KeyCode.RightArrow;
-                 }
-                 else if (Input.GetKeyDown(KeyCode.UpArrow)) {
-                      pressedKey = KeyCode.UpArrow;
-                 }
-                 else if (Input.GetKeyDown(KeyCode.DownArrow)) {
-                      pressedKey = KeyCode.DownArrow;
-                 }
+               if (movementDirection == Vector3.zero) {
+                rb.velocity -= movementDirection * digAccel * Time.deltaTime;
+                digDecel = Mathf.Pow(digDecel, 2f);
 
-                    startTime = Time.time;
-                    }
-                    // Debug.Log(Time.time - startTime);
-                    if(Input.GetKeyUp(pressedKey) && (Time.time - startTime) > 1.5f) {
-                    movingFwd = true;
-                    startTime = Time.time;
-                    }
-                
-              
-                }
-
-             /*
-               if (lastMoveVector != Vector3.zero) {
-
-                Debug.Log("Last" + lastMoveVector);
-                }
-                if (moveVector != Vector3.zero) {
-                Debug.Log(" This" + moveVector);
-                } 
-                */
-
-                float t = secondsSoFar / secondsToChangeDir;
-          
-                if (lastMoveVector == -moveVector && moveVector != Vector3.zero && lastMoveVector != Vector3.zero && movingFwd) {
-                secondsSoFar += Time.deltaTime;
-                slipping = true;
-
-                 rb.velocity = lastMoveVector * movementSpeed;
-                 movementSpeed = Mathf.Lerp(movementSpeed, 0.75f, t);
-                //Debug.Log("Portion lerped: " + t);
-                }
-                else {
-                    secondsSoFar = 0;
-                }
-               
-                 
-                 if(t > 0.4f) {
-                 secondsSoFar = 0;
-                slipping = false;
-                lastMoveVector = Vector3.zero;
-                moveVector = Vector3.zero;
-                movementSpeed = 6f;
-                startTime = Time.time;
-                 if (Input.GetKey(KeyCode.LeftArrow)) {
-                      pressedKey = KeyCode.LeftArrow;
-                 }
-                 else if (Input.GetKey(KeyCode.RightArrow)) {
-                      pressedKey = KeyCode.RightArrow;
-                 }
-                 else if (Input.GetKey(KeyCode.UpArrow)) {
-                      pressedKey = KeyCode.UpArrow;
-                 }
-                 else if (Input.GetKey(KeyCode.DownArrow)) {
-                      pressedKey = KeyCode.DownArrow;
-                 }
+             }
+             else {
+               rb.velocity += movementDirection * digAccel * Time.deltaTime;
+               Debug.Log("ACCEL" + rb.velocity);
                }
-                 if(!slipping)  {
-                 
-                   rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
-                 
-                lastMoveVector = moveVector;
-                }
-                
-
+                  }
 
             }
 
@@ -307,8 +238,7 @@ public class playerMovement : MonoBehaviour
             {
                 rb.velocity = new Vector3(horizontalInput * 2f, 5 + (0.02f * movementSpeed), verticalInput * 2f);
                 risingFromDig = true;
-             lastMoveVector = Vector3.zero;
-             moveVector = Vector3.zero;
+             digDecel = 100f;
             }
             else
             {
@@ -319,8 +249,7 @@ public class playerMovement : MonoBehaviour
                 risingFromDig = false;
                 Destroy(arrowClone);
                 movementSpeed = 6;
-                secondsSoFar = 0f;
-                slipping = false;
+                accelTrigger = false;
             }
         }
 
@@ -330,6 +259,9 @@ public class playerMovement : MonoBehaviour
         playerReticle = castScript.Casting();
 
         //TRAVELING
+       // if(Input.GetKeyDown(KeyCode.C)) {
+        //        isTraveling = true;
+      //  }
         if (playerReticle != null)
         {
             travelScript.Traveling(playerReticle);

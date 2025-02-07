@@ -8,7 +8,7 @@ public class EnemyInfo : MonoBehaviour
  public int maxHealth;
  public int currentHealth;
  public GameObject enemy;
-   
+ public bool isHooked;
   
  void Start() {
  currentHealth = maxHealth;
@@ -20,6 +20,9 @@ public class EnemyInfo : MonoBehaviour
        if (currentHealth < 1) {
               Destroy(gameObject);
        }
+
     }
+
+    
   
 }
