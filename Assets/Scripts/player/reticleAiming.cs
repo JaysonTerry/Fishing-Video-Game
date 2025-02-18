@@ -55,6 +55,7 @@ void DestroyReticle()
                 rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
                 }
 
+                //bounces the reticle back when it goes out of range
          else {
             Vector3 dir =  Vector3.Normalize(player.transform.position - reticle.transform.position);
             rb.AddForce(dir * 10f);
@@ -63,11 +64,7 @@ void DestroyReticle()
         }
         else
         {
-            if (travelScript.rising == true)
-            {
-                activeRet = false;
-            }
-
+        
             if (!activeRet)
             {
                 DestroyReticle();

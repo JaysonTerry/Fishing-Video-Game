@@ -41,16 +41,16 @@ public class LockOn : MonoBehaviour
      
               if (lockOnRadius >= Vector2.Distance(transform.position, enemy.transform.position)) {
 
-              if (Input.GetKeyDown(KeyCode.E)){
+              if (Input.GetKeyDown(KeyCode.E)  && Vector2.Distance(transform.position, enemy.transform.position) > 0.05f){
               moveToEnemy = true;
               }
 
-              if (Vector2.Distance(transform.position, enemy.transform.position) > 0.05f && moveToEnemy) {
+              if (moveToEnemy) {
                current = Mathf.MoveTowards(current, 1f, speed * Time.deltaTime);
-            transform.position = Vector3.Lerp(transform.position, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 0.5f, enemy.transform.position.z), current);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(enemy.transform.position.x, transform.position.y, enemy.transform.position.z), current);
             //Debug.Log("The Distance is: " + Vector2.Distance(transform.position, enemy.transform.position));
-
-            if (current > 0.98f) {
+            Debug.Log(current);
+            if (current > 0.60f) {
             moveToEnemy = false;
             current = 0f;
             shortestDist = 99999999;

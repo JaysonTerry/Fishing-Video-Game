@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class Enemy
 {
@@ -9,6 +10,8 @@ public class Enemy
       public int maxHealth;
       public int currentHealth;
       public GameObject enemy;
+       public string currentScene;
+
       public Enemy(string eName, int eMaxHealth, int eCurrentHealth, GameObject eObj) {
       eName = name;
       eMaxHealth = maxHealth;
@@ -27,19 +30,25 @@ public string name;
 public int maxHealth;
 public int currentHealth;
 public GameObject enemy;
+public int dangerLvlToSpawn;
 public Enemy enemyToSpawn;
+public bool spawned;
 
  public event EventHandler OnSpawnEvent;
 
 void Start() {
 
     enemyToSpawn = new Enemy(name, maxHealth, currentHealth, enemy);
+    spawned = false;
      OnSpawnEvent += SpawnEnmy;
 }
 
+ 
+
 void Update() {
-    if (Input.GetKeyDown(KeyCode.Q)) {
+    if (dangerLvlToSpawn == SceneData.currentSceneDangerLvl && spawned == false) {
          OnSpawnEvent?.Invoke(this, EventArgs.Empty);
+         spawned = true;
     }
 }
  

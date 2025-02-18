@@ -32,7 +32,7 @@ public class playerCasting : MonoBehaviour
                     {
                       if (Physics.Raycast(transform.position, direction, out hit, distance))
                      {
-                     Debug.Log("Hit a wall!");
+                   //  Debug.Log("Hit a wall!");
                         Instantiate(reticleSpawn, hit.point, Quaternion.Euler(90, 0, 0));
                         }
                         else {
@@ -75,12 +75,10 @@ public class playerCasting : MonoBehaviour
                     reticle = null;
                 }
 
-                if (Input.GetKeyUp(KeyCode.Z) && isCasting && !bobMoving)
+                if (!Input.GetKey(KeyCode.Z) && isCasting && !bobMoving)
                 {
-                Debug.Log("Flag!");
                     isCasting = false;
                     moveScript.reticleActive = false;
-
                 } 
        
        

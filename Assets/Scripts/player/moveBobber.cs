@@ -88,12 +88,14 @@ public class moveBobber : MonoBehaviour
 
             // Debug.Log("Mineru")
             // Move back to player
+            if (moveScript.isHooking == false) {
             Vector3 rightPosition = player.transform.position + player.transform.right;
             rightPosition.y = rightPosition.y + 1f;
            transform.position = rightPosition;
             isMove = false;
             bobLanded = false;
              moveScript.reticleActive = false;
+             }
             
 
         } 

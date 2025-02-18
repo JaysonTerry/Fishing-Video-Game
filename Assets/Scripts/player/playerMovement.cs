@@ -49,6 +49,7 @@ public class playerMovement : MonoBehaviour
     public bool CastCheck = true;
     public static GameObject instance;
     [SerializeField] Vector3 movementDirection;
+    public bool isHooking;
 
 
 
@@ -81,6 +82,7 @@ public class playerMovement : MonoBehaviour
         isTraveling = false;
         isDigging = false;
         castScript.isCasting = false;
+        isHooking = false;
         rb.velocity = new Vector3(0, 0f, 0);
         this.rb.useGravity = true;
         reticleActive = false;
@@ -132,12 +134,17 @@ public class playerMovement : MonoBehaviour
             if (castScript.isCasting)
             {
              GameObject reticle = GameObject.Find("Reticle(Clone)");
+
+             if (reticle != null) {
             Vector3 direction = reticle.transform.position - transform.position;
              Quaternion toRotation = Quaternion.LookRotation(direction);
               direction = reticle.transform.rotation * direction;
                 direction.y = 0;
+              transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+            }
+            
 
-             transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+          
 
 
                 if (bobScript.bobLanded)
@@ -152,9 +159,11 @@ public class playerMovement : MonoBehaviour
 
             else
             {
+            if (!isHooking){
                 rotationSpeed = 720f;
                  Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+                }
             }
 
        
