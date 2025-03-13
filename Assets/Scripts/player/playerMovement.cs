@@ -209,12 +209,12 @@ public class playerMovement : MonoBehaviour
             if (!arrowActive)
             {
                 arrowClone = Instantiate(arrow, transform.position, transform.rotation);
-                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 5, transform.position.z);
+                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 4, transform.position.z);
                 arrowActive = true;
             }
             else
             {
-                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 5, transform.position.z);
+                arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 4, transform.position.z);
             }
 
             if (Input.GetKey(KeyCode.Space)){

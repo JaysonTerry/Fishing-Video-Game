@@ -36,7 +36,7 @@ public class RoomDisplay : MonoBehaviour
         spawnOffset = new Vector2(-0.375f * w, 0.38f * h); // offset from the top left corner
 
         //set up the starting room
-        Update_Map(2, 2, "Room B2");
+      //  Update_Map(2, 2, "Room B2");
         RoomData roomToAdd = (RoomData)ScriptableObject.CreateInstance("RoomData");
         roomToAdd.Init(2, 2, "Room B2", true, roomIcon);
         roomsInfo.Rooms.Add(roomToAdd);
@@ -56,7 +56,7 @@ public class RoomDisplay : MonoBehaviour
         trans.localPosition = spawnOffset; // Use anchoredPosition to position the RectTransform
 
 
-        trans.sizeDelta = new Vector2(10, 10); // setting size
+        trans.sizeDelta = new Vector2(8, 8); // setting size
         imgObject.AddComponent<Image>();
         Image image = imgObject.GetComponent<Image>();
         image.sprite = roomSprite;

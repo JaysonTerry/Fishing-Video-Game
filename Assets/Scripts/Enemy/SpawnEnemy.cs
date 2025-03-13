@@ -46,7 +46,7 @@ void Start() {
  
 
 void Update() {
-    if (dangerLvlToSpawn == SceneData.currentSceneDangerLvl && spawned == false) {
+    if (SceneData.currentSceneDangerLvl >= dangerLvlToSpawn && spawned == false) {
          OnSpawnEvent?.Invoke(this, EventArgs.Empty);
          spawned = true;
     }

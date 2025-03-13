@@ -11,6 +11,9 @@ public class SetDangerLevel : MonoBehaviour
     public SetText setText;
     public static string currentScene;
     public static int currentSceneDangerLvl;
+    private bool ranOnce;
+    public float limitTimer = 0f;
+    public bool criticalDanger = false;
 
     void Start()
     {
@@ -42,6 +45,7 @@ public class SetDangerLevel : MonoBehaviour
     {
         // Update the current scene when a new scene is loaded
         currentScene = scene.name;
+        ranOnce = false;
     }
 
     void Update()
@@ -50,6 +54,8 @@ public class SetDangerLevel : MonoBehaviour
         SetTimer();
         SetDangerLvl();
         GetCurrentSceneDangerLvl();
+        ResetDanger();
+        DangerLimit();
     }
 
     void SetDangerLvl()
@@ -99,5 +105,61 @@ public class SetDangerLevel : MonoBehaviour
             }
         }
     }
+    void ResetDanger() {
 
+    int sceneCount = SceneManager.sceneCountInBuildSettings;
+    GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+     string dangerText = null;
+
+       
+        if (enemies.Length == 0)
+        {
+     for (int i = 0; i < sceneCount; i++)
+        { 
+         if (Scenes[i] == currentScene && !ranOnce)
+            {
+              ranOnce = true;
+               DangerLvls[i] = 0;
+               limitTimer = 0f;
+               criticalDanger = false;
+               dangerText = Scenes[i] + " is ALL CLEAR!";
+               setText.AddLine(dangerText);
+               break;
+            }
+        }
+       }
+    }
+
+  void DangerLimit() {
+    int sceneCount = SceneManager.sceneCountInBuildSettings;
+    
+    if (!criticalDanger) {
+        bool foundCritical = false;
+
+       
+        for (int i = 0; i < sceneCount; i++) {
+            if (DangerLvls[i] == 3) {
+                foundCritical = true; 
+                criticalDanger = true;
+                break;
+            }
+        }
+
+        
+        if (!foundCritical) {
+            limitTimer = 0;
+        }
+    }
+    else {
+        
+        limitTimer += Time.deltaTime;
+    }
+
+    if (limitTimer > 20f) {
+       Timer.remainingTime = 0f;
+    }
+}
+
+  
+    
 }

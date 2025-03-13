@@ -21,7 +21,7 @@ public class CameraControls : MonoBehaviour
           
 
         // Calculate the initial offset between the player and the camera
-        initialOffset = transform.position - player.transform.position;  
+        initialOffset = transform.position - new Vector3(-0.07f,2.98f, 0f);  
     }
 
    

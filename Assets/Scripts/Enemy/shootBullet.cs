@@ -9,11 +9,14 @@ public class shootBullet : MonoBehaviour
     [SerializeField] playerHealth healthScript;
     [SerializeField] float cooldown = 0f;
    
+    void Start() {
+     noticeScript = gameObject.GetComponent<EnemyNotice>();
+    GameObject player = GameObject.FindWithTag("Player");
+    healthScript = player.GetComponent<playerHealth>();
+    }
    
-
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
+       
         cooldown = cooldown + Time.deltaTime;
         if (noticeScript.inSight)
         {
@@ -24,7 +27,7 @@ public class shootBullet : MonoBehaviour
     {
 
             yield return new WaitForSeconds(3f);
-        if (cooldown > 5)
+        if (cooldown > 2)
         {
             GameObject bulletClone = Instantiate(bullet, transform.position, transform.rotation);
             Vector3 unitVector = noticeScript.lookPos.normalized;
@@ -35,4 +38,5 @@ public class shootBullet : MonoBehaviour
           
 
     }
+   
 }

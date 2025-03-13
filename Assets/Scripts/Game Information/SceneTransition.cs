@@ -43,11 +43,6 @@ public class SceneTransition : MonoBehaviour
 
     private void Set_Next_Room(object sender, EventArgs e)
     {
-        bool roomAdded  = AddNewRoom(nextRoomCol, nextRoomRow, nextRoomName, roomIcon, roomsInfo); //add new room to a list 
-        if (roomAdded)
-        {
-            roomDisplay.Update_Map(nextRoomCol, nextRoomRow, nextRoomName);
-        }
         playerPlacer.enterPos = playerPlacer.SetEnterPositon(nextSpawnDirection);
         GameObject player = GameObject.FindWithTag("Player");
         playerPlacer.PlacePlayer(player);
@@ -59,9 +54,11 @@ public class SceneTransition : MonoBehaviour
 
         if (other.CompareTag("Player") && !other.isTrigger)
         {
+         GameObject player = GameObject.FindWithTag("Player");
             stateController.OnLoadingZone += Set_Next_Room;
             playerHealth healthScript = other.gameObject.GetComponent<playerHealth>();
             StateController.startingHealth = healthScript.health;
+           player.GetComponent<playerMovement>().Return2Normal();
             //sceneInfo.tracking.playerInRoom = false;
             transitioned = true;
             SceneManager.LoadScene(sceneToLoad);
@@ -71,29 +68,7 @@ public class SceneTransition : MonoBehaviour
         }
     }
 
-    public bool AddNewRoom(int nextRoomCol, int nextRoomRow, string nextRoomName, Image roomIcon, RoomsInfo roomsInfo)
-    {
-        //adds a room and displays it on the map
-       
-
-        RoomData roomToAdd = (RoomData)ScriptableObject.CreateInstance("RoomData");
-        roomToAdd.Init(nextRoomCol, nextRoomRow, nextRoomName, true, roomIcon);
-        for (int i = 0; i < roomsInfo.Rooms.Count; i++)
-        {
-            //check if room to be added already exists
-            if (roomsInfo.Rooms[i].roomName == roomToAdd.roomName)
-            {
-                Debug.Log("A room of that name already exists!");
-                return false;
-            }
-
-        }
-        
-     roomsInfo.Rooms.Add(roomToAdd);
-        return true;
-
-    }
-
+  
   
         
         
