@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class playerTraveling : MonoBehaviour
 {
-    [SerializeField] playerMovement moveScript;
+   /* [SerializeField] playerMovement moveScript;
     [SerializeField] moveBobber bobberScript;
     [SerializeField] playerCasting castScript;
     [SerializeField] GameObject player;
@@ -27,7 +27,7 @@ public class playerTraveling : MonoBehaviour
             //Digging: check if fully underground
             if (moveScript.isDigging && Mathf.Abs(moveScript.topHeight - Mathf.Abs(moveScript.playerTransform.position.y)) > 5f)
             {
-                Debug.Log("gamers");
+               // Debug.Log("gamers");
                 if (moveScript.riseUp)
                 {
                     moveScript.rb.velocity = new Vector3(moveScript.rb.velocity.x, moveScript.digHop, moveScript.rb.velocity.z);
@@ -63,6 +63,6 @@ public class playerTraveling : MonoBehaviour
         moveScript.enabled = true;
         moveScript.rb.useGravity = true;
         Debug.Log("grav on");
-    }
+    } */
     }
 

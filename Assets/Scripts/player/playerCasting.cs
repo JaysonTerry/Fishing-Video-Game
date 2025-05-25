@@ -49,10 +49,8 @@ public class playerCasting : MonoBehaviour
                 if (isCasting)
                 {
              
-                    if (moveScript.isTraveling == false)
-                    {
                         moveScript.rb.velocity = new Vector3(0, 0, 0);
-                    }
+                    
                  /*
                    //start traveling by digging underground
                     if (bobScript.bobLanded == true && Input.GetKeyDown(KeyCode.C) && moveScript.isDigging == false)
@@ -75,7 +73,7 @@ public class playerCasting : MonoBehaviour
                     reticle = null;
                 }
 
-                if (!Input.GetKey(KeyCode.Z) && isCasting && !bobMoving)
+                if (!Input.GetKey(KeyCode.Z) && isCasting && !bobMoving && moveScript.isHooking == false)
                 {
                     isCasting = false;
                     moveScript.reticleActive = false;

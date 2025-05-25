@@ -34,9 +34,10 @@ public class playerMovement : MonoBehaviour
     [SerializeField] GameObject arrowClone;
     public float movementSpeed = 6f;
     public float digForce = 5f;
-    public float digHop = 1.5f;
+    public float digHop = 10f;
     public float rotationSpeed = 720f;
     public bool isDigging = false;
+    public bool isDiggingDown = false;
     public bool reticleActive = false;
     public bool bobMoving;
     [SerializeField] bool arrowActive = false;
@@ -50,6 +51,10 @@ public class playerMovement : MonoBehaviour
     public static GameObject instance;
     [SerializeField] Vector3 movementDirection;
     public bool isHooking;
+    public float holdTimeThreshold = 0.5f;
+    private float timePressed = 0f;
+    private bool isSpacebarHeld = false;
+
 
 
 
@@ -70,13 +75,12 @@ public class playerMovement : MonoBehaviour
 
     public void StartDigging()
     {
-        if (isDigging)
-        {
-            rb.velocity = new Vector3(rb.velocity.x, -1 * digForce, rb.velocity.z);
-            topHeight = playerTransform.position.y;
-        }
+     
+     isDiggingDown = false;
+       isDigging = true;
+       rb.AddForce(0, -3, 0, ForceMode.Impulse);
     }
-
+    //resets Player Status to Default
     public void Return2Normal()
     {
         isTraveling = false;
@@ -89,6 +93,12 @@ public class playerMovement : MonoBehaviour
         riseUp = false;
         CastCheck = false;
     }
+
+    //for delaying Return2Normal
+    public void InvokeReturn2Normal(float delay)
+{
+    Invoke("Return2Normal", delay);
+}
 
     private void Awake()
     {
@@ -111,6 +121,7 @@ public class playerMovement : MonoBehaviour
         CastCheck = true;
         playerReticle = new Reticle(this.gameObject, aimScript);
         arrowClone = this.gameObject;
+        digHop = 7f;
 
 
     }
@@ -118,16 +129,16 @@ public class playerMovement : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log(CastCheck);
+        
         //Movement: left/right input
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        
-        
-
-
         Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
         movementDirection.Normalize();
+
+
+
+        //rotation while casting
         if (movementDirection != Vector3.zero)
         {
 
@@ -170,28 +181,52 @@ public class playerMovement : MonoBehaviour
            
         }
         //MOVEMENT
-        if (castScript.isCasting == false)
+        if (castScript.isCasting == false && !isDiggingDown)
         {
             rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
             rb.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
-        //DIGGING
-        //Digging: jumps then burrows into the ground
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded() && castScript.isCasting == false)
+        //DIGGING && JUMPING
+        
+
+        // Check if spacebar is pressed and the object is grounded and Jumps
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded() && !castScript.isCasting)
         {
-            timer = Time.time;
-            this.rb.useGravity = false;
-            isDigging = true;
-            rb.velocity = new Vector3(rb.velocity.x, digHop, rb.velocity.z);
-            Invoke("StartDigging", 0.5f);
+            // Apply upward force using AddForce (Impulse mode)
+            rb.AddForce(Vector3.up * digHop, ForceMode.Impulse);
         }
-        else if (Input.GetKeyUp(KeyCode.Space) && Time.time - timer < 0.5f)
+
+        
+    if (Input.GetKey(KeyCode.Space) && isGrounded())
+    {
+        timePressed += Time.deltaTime;
+
+        if (timePressed >= holdTimeThreshold && !isSpacebarHeld)
         {
-            rb.AddForce(0, -3, 0);
-            this.rb.useGravity = true;
+            isSpacebarHeld = true;
+        }
+    }
+    else
+    {
+        timePressed = 0f;
+        isSpacebarHeld = false;
+    }
+
+        
+        if (Input.GetKeyUp(KeyCode.Space) || isSpacebarHeld == true)
+        {
+           rb.AddForce(Vector3.down * digHop, ForceMode.Impulse);
             isDigging = false;
         }
+
+         else if (Input.GetKeyDown(KeyCode.X) && !castScript.isCasting)
+        {
+        isDiggingDown = true;
+         rb.velocity = Vector3.zero;
+         topHeight = playerTransform.position.y;
+         Invoke("StartDigging", 0.5f);
+        } 
 
 
 
@@ -202,10 +237,13 @@ public class playerMovement : MonoBehaviour
             isUnderground = true;
             gameObject.GetComponent<digCheck>().enabled = true;
         }
-
+        
+        //if player is fully underground
         if (isUnderground)
         {
+            this.rb.useGravity = false;
 
+        //place an arrow that floats above player and faces camera
             if (!arrowActive)
             {
                 arrowClone = Instantiate(arrow, transform.position, transform.rotation);
@@ -217,7 +255,8 @@ public class playerMovement : MonoBehaviour
                 arrowClone.transform.position = new Vector3(transform.position.x, transform.position.y + 4, transform.position.z);
             }
 
-            if (Input.GetKey(KeyCode.Space)){
+            //accelration while underground
+            if (Input.GetKey(KeyCode.X)){
            
             if(accelTrigger == false){
              rb.velocity = new Vector3(horizontalInput * movementSpeed, 0f, verticalInput * movementSpeed);
@@ -271,10 +310,10 @@ public class playerMovement : MonoBehaviour
        // if(Input.GetKeyDown(KeyCode.C)) {
         //        isTraveling = true;
       //  }
-        if (playerReticle != null)
+       /* if (playerReticle != null)
         {
             travelScript.Traveling(playerReticle);
-        }
+        } */
         if (healthScript.heldDownZ == true)
         {
             if (!Input.GetKey(KeyCode.Z))
@@ -291,6 +330,10 @@ public class playerMovement : MonoBehaviour
     public bool isGrounded()
     {
         return Physics.CheckSphere(groundCheck.position, 0.1f, ground);
+    }
+
+    public void pullHooked() {
+
     }
 }
 
